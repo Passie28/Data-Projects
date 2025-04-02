@@ -1,0 +1,129 @@
+<html>
+ <head>
+  <title>
+   Final Cleaned Code Summary
+  </title>
+ </head>
+ <body>
+  <h1>
+   Python Code with Final Explanations
+  </h1>
+  <h2>
+   Load and Explore Data
+  </h2>
+  <pre style="background-color:#f4f4f4;padding:10px;border:1px solid #ccc;"># Import pandas
+import pandas as pd
+
+# Load the dataset
+df = pd.read_csv('raw_house_data.csv')
+
+# View first few rows
+df.head()
+
+# Get summary info (column types, nulls)
+df.info()</pre>
+  <h2>
+   Summary Statistics and Missing Values
+  </h2>
+  <pre style="background-color:#f4f4f4;padding:10px;border:1px solid #ccc;"># Summary statistics of numeric columns
+df.describe()
+
+# Count missing values in each column
+df.isnull().sum()</pre>
+  <h2>
+   Exploratory Data Analysis (EDA): Histograms and Boxplots
+  </h2>
+  <pre><code class="language-python">
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Select columns to visualize
+columns = ['sold_price', 'lot_acres', 'year_built', 'bedrooms', 
+           'bathrooms', 'sqrt_ft', 'garage', 'fireplaces']
+
+# Plotting histograms
+for col in columns:
+    plt.figure(figsize=(12, 6))
+    plt.hist(df[col], bins=40)
+    plt.title("Histogram of " + col)
+    plt.xlabel(col)
+    plt.ylabel("Frequency")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+# Plotting boxplots
+for col in columns:
+    plt.figure(figsize=(8, 3))
+    sns.boxplot(x=df[col])
+    plt.title("Boxplot of " + col)
+    plt.xlabel(col)
+    plt.ylabel("Value range")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+</code></pre>
+  <h2>
+   Outlier Removal
+  </h2>
+  <pre style="background-color:#f4f4f4;padding:10px;border:1px solid #ccc;">
+# cap to a max of 10
+df = df[df['bathrooms'] &lt;= 10]
+# cap to a max of 6
+df = df[df['garage'] &lt;= 6]
+# cap to a max of 100
+df = df[df['lot_acres'] &lt;= 100]
+# cap to a max of 10000
+df = df[df['sqrt_ft'] &lt;= 10000]
+
+# Remove Extreme sold_price Values
+df = df[df['sold_price'] &lt;= 2000000]  # filters houses that sold for over 2 million
+</pre>
+  <h2>
+   Fixing Invalid Values
+  </h2>
+  <pre style="background-color:#f4f4f4;padding:10px;border:1px solid #ccc;"># Find median of valid years
+valid_years = df[df['year_built'] != 0]['year_built']
+median_year = valid_years.median()
+
+# Replace 0 with median
+df['year_built'] = df['year_built'].replace(0, median_year)</pre>
+  <h2>
+   Handling Missing Values in Categorical Columns
+  </h2>
+  <pre style="background-color:#f4f4f4;padding:10px;border:1px solid #ccc;">
+# Let us fill the categorical_columns with 'None'
+df['kitchen_features'] = df['kitchen_features'].fillna('None')
+</pre>
+  <pre>
+# Convert HOA to numeric, forcing errors to NaN if they exist
+df['HOA'] = pd.to_numeric(df['HOA'], errors='coerce')
+
+# Fill any resulting NaN with 0
+df['HOA'] = df['HOA'].fillna(0)
+</pre>
+  <h2>
+   Row Comparison Between Raw and Cleaned Data
+  </h2>
+  <pre>
+# Reload the original dataset to count the original rows
+original_df = pd.read_csv('raw_house_data.csv')  # upload original data
+original_rows = original_df.shape[0]  # count rows
+
+# Count number of rows in cleaned dataframe
+cleaned_rows = df.shape[0]
+
+# Compare cleaned rows to original rows
+print("Original rows:", original_rows)
+print("Cleaned rows:", cleaned_rows)
+</pre>
+  <h2>
+   Final Checks and Save
+  </h2>
+  <pre style="background-color:#f4f4f4;padding:10px;border:1px solid #ccc;"># Check data types
+df.dtypes
+
+# Save cleaned data to CSV
+df.to_csv('cleaned_house_data.csv', index=False)</pre>
+ </body>
+</html>
